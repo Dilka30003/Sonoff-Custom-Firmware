@@ -1,6 +1,9 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
+// Double tap to toggle whole device
+bool toggleAll = true;
+
 // pin numbers for pads
 #define pad1 0
 #define pad2 9
@@ -211,6 +214,7 @@ void loop() {
         handle1();
         handle2();
         handle3();
+client.publish(MQTT_LIGHT_STATE_TOPIC, "long1", true);
       }
       else
       {
@@ -236,7 +240,7 @@ void loop() {
       delay(longPress);                //long press
       if (digitalRead(pad2) == 0)
       {
-        client.publish(MQTT_LIGHT_STATE_TOPIC, "long", true);
+        client.publish(MQTT_LIGHT_STATE_TOPIC, "long2", true);
       }
       else
       {
@@ -269,6 +273,8 @@ void loop() {
         handle1();
         handle2();
         handle3();
+client.publish(MQTT_LIGHT_STATE_TOPIC, "long3", true);
+
       }
       else
       {
