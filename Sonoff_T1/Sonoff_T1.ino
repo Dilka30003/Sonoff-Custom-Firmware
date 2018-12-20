@@ -1,31 +1,38 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-
+// pin numbers for pads
 #define pad1 0
 #define pad2 9
 #define pad3 10
 
+//pin numbers for relays
 #define relay1 12
 #define relay2 5
 #define relay3 4
 
+// pin number for LED under Wifi icon
 #define notif 13
 
+// time in Millis for long press
+#define longPress 300
 
 
 
+// booleans to store switch positions
 bool s1 = false;
 bool s2 = false;
 bool s3 = false;
 
-long previousMillis = 0;        // will store last time LED was updated
+
+
+// reconnect without holding the program
+long previousMillis = 0;
 int ledState = LOW;    
 
- 
-// the follow variables is a long because the time, measured in miliseconds,
-// will quickly become a bigger number than can be stored in an int.
-long interval = 5000;           // interval at which to blink (milliseconds)
+long interval = 5000;
+
+
 
 #define MQTT_VERSION MQTT_VERSION_3_1_1
 
@@ -35,16 +42,16 @@ const char* WIFI_PASSWORD = "68sM69cD01aM02dM";
 
 // MQTT: ID, server IP, port, username and password
 const PROGMEM char* MQTT_CLIENT_ID = "T1-1";
-const PROGMEM char* MQTT_SERVER_IP = "192.168.1.12";
+const PROGMEM char* MQTT_SERVER_IP = "192.168.1.12";    //server ip (eg. 192.168.1.10)
 const PROGMEM uint16_t MQTT_SERVER_PORT = 1883;
 const PROGMEM char* MQTT_USER = "admin"; 
 const PROGMEM char* MQTT_PASSWORD = "Terrara96";
 
 // MQTT: topics
-const char* MQTT_LIGHT_STATE_TOPIC = "home/sonoff/light1/status";
-const char* MQTT_LIGHT_COMMAND_TOPIC = "home/sonoff/light1/switch";
+const char* MQTT_LIGHT_STATE_TOPIC = "home/sonoff/light1/status";      //topic to publish state changes / double press actions
+const char* MQTT_LIGHT_COMMAND_TOPIC = "home/sonoff/light1/switch";    //topic to recieve commands
 
-// payloads by default (on/off)
+// payloads by default
 const char* ON1 = "ON1";
 const char* OFF1 = "OFF1";
 
@@ -57,7 +64,7 @@ const char* OFF3 = "OFF3";
 WiFiClient wifiClient;
 PubSubClient client(wifiClient);
 
-// function called to publish the state of the light (on/off)
+// function called to handle light state output and MQTT state publishing
 void handle1() {
   if (s1) {
     client.publish(MQTT_LIGHT_STATE_TOPIC, ON1, true);
@@ -87,6 +94,7 @@ void handle3() {
     digitalWrite(relay3, LOW);
   }
 }
+
 
 // function called when a MQTT message arrived
 void callback(char* p_topic, byte* p_payload, unsigned int p_length) {
@@ -143,26 +151,29 @@ void reconnect() {
       Serial.print("ERROR: failed, rc=");
       Serial.print(client.state());
       Serial.println("DEBUG: try again in 5 seconds");
-      // Wait 5 seconds before retrying
     }
 }
 
 void setup() {
+  // Set up pads
   pinMode(pad1, INPUT);
   pinMode(pad2, INPUT);
   pinMode(pad3, INPUT);
 
+  // Set up relays
   pinMode(relay1, OUTPUT);
   pinMode(relay2, OUTPUT);
   pinMode(relay3, OUTPUT);
 
+  // Set up LED
   pinMode(notif, OUTPUT);
 
+  // Turn off LED
   digitalWrite(notif, HIGH);
 
   Serial.begin(115200);
 
-    // init the WiFi connection
+  // init the WiFi connection
   Serial.println();
   Serial.println();
   Serial.print("INFO: Connecting to ");
@@ -170,10 +181,6 @@ void setup() {
   Serial.println(WIFI_SSID);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-//  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-//  }
   
   Serial.println("");
   Serial.println("INFO: WiFi connected");
@@ -194,7 +201,7 @@ void loop() {
     delay(10);
     if (digitalRead(pad1) == 0)
     {
-      delay(300);
+      delay(longPress);                //long press
       if (digitalRead(pad1) == 0)
       {
         s1 = true;
@@ -226,7 +233,7 @@ void loop() {
     delay(10);
     if (digitalRead(pad2) == 0)
     {
-      delay(300);
+      delay(longPress);                //long press
       if (digitalRead(pad2) == 0)
       {
         client.publish(MQTT_LIGHT_STATE_TOPIC, "long", true);
@@ -252,7 +259,7 @@ void loop() {
     delay(10);
     if (digitalRead(pad3) == 0)
     {
-      delay(300);
+      delay(longPress);                //long press
       if (digitalRead(pad3) == 0)
       {
         s1 = false;
@@ -279,7 +286,7 @@ void loop() {
     while (digitalRead(pad3) == LOW);
   }
 
-
+  // LED on when connected to Wifi
   if (WiFi.status() == WL_CONNECTED)
   {
     digitalWrite(notif, LOW);
@@ -290,7 +297,7 @@ void loop() {
   }
 
   unsigned long currentMillis = millis();
-
+  // Retry wifi connection every 5 seconds if failed
   if (WiFi.status() == WL_CONNECTED)
   {
     if(currentMillis - previousMillis > interval) {
@@ -299,6 +306,7 @@ void loop() {
       }
       previousMillis = currentMillis;
     }
+    // Only run MQTT control when connected to wifi
     client.loop();
   }
 }
