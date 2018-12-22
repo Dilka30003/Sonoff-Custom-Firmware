@@ -3,6 +3,9 @@
 
 #include "passwords.h"
 
+// Made By Dhiluka
+// 2018-12-22
+
 // Double tap to toggle whole device
 bool toggleAll = true;
 
