@@ -3,3 +3,4 @@
 .vscode/settings.json
 README.md
 Sonoff_T1/passwords.h
+OTAbase/passwords.h
