@@ -214,7 +214,7 @@ void loop() {
         handle1();
         handle2();
         handle3();
-client.publish(MQTT_LIGHT_STATE_TOPIC, "long1", true);
+        client.publish(MQTT_LIGHT_STATE_TOPIC, "long1", true);
       }
       else
       {
@@ -273,7 +273,7 @@ client.publish(MQTT_LIGHT_STATE_TOPIC, "long1", true);
         handle1();
         handle2();
         handle3();
-client.publish(MQTT_LIGHT_STATE_TOPIC, "long3", true);
+        client.publish(MQTT_LIGHT_STATE_TOPIC, "long3", true);
 
       }
       else
