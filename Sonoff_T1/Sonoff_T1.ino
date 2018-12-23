@@ -4,7 +4,8 @@
 #include "passwords.h"
 
 // Made By Dhiluka
-// 2018-12-22
+// 2018-12-23
+// Code Should Work On Any Gang Version of the T1
 
 // Double tap to toggle whole device
 bool toggleAll = true;
