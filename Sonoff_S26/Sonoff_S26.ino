@@ -50,7 +50,7 @@ void handle() {
   } else {
     client.publish(MQTT_LIGHT_STATE_TOPIC, OFF, true);
     digitalWrite(relay, LOW);
-    digitalWrite(led, HIGH));
+    digitalWrite(led, HIGH);
   }
 }
 
