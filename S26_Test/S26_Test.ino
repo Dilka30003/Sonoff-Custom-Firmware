@@ -1,6 +1,8 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
+#include <passwords.h>
+
 #define relay 12
 #define led 13
 #define button 0
@@ -21,15 +23,15 @@ const char* WIFI_SSID = wifiUser;
 const char* WIFI_PASSWORD = wifiPass;
 
 // MQTT: ID, server IP, port, username and password
-const PROGMEM char* MQTT_CLIENT_ID = "T1-1";
-const PROGMEM char* MQTT_SERVER_IP = "broker.hivemq.com";                   // server ip (eg. 192.168.1.10)
+const PROGMEM char* MQTT_CLIENT_ID = "S26-1";
+const PROGMEM char* MQTT_SERVER_IP = "192.168.1.12";                   // server ip (eg. 192.168.1.10)
 const PROGMEM uint16_t MQTT_SERVER_PORT = 1883;                        // MQTT Port (Deafult: 1883)
-const PROGMEM char* MQTT_USER = "";                              // MQTT Username
-const PROGMEM char* MQTT_PASSWORD = "";                          // MQTT Password
+const PROGMEM char* MQTT_USER = MQTTUser;                              // MQTT Username
+const PROGMEM char* MQTT_PASSWORD = MQTTPass;                          // MQTT Password
 
 // MQTT: topics
-const char* MQTT_LIGHT_STATE_TOPIC = "asdfbajsdfbjksad/status";      // topic to publish state changes / double press actions
-const char* MQTT_LIGHT_COMMAND_TOPIC = "asdfbajsdfbjksad/switch";    // topic to recieve commands
+const char* MQTT_LIGHT_STATE_TOPIC = "home/s26/1/status";      // topic to publish state changes / double press actions
+const char* MQTT_LIGHT_COMMAND_TOPIC = "home/s26/1/switch";    // topic to recieve commands
 
 // payloads by default
 const char* ON = "ON";
